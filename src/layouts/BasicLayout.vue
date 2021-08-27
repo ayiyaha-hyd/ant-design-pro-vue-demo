@@ -1,34 +1,41 @@
 <template>
   <div :class="[`nav-theme-${navTheme}`, `nav-layout-${navLayout}`]">
+    <!-- 布局1 -->
     <a-layout id="components-layout-demo-side" style="min-height: 100vh">
+      <!-- 侧边栏布局 -->
       <a-layout-sider
+        collapsible
+        width="256px"
         v-if="navLayout === 'left'"
         :theme="navTheme"
         :trigger="null"
         v-model="collapsed"
-        collapsible
-        width="256px"
       >
+        <!-- 标题Logo -->
         <div class="logo">Ant Design Vue Pro</div>
-        <SiderMenu />
+        <!-- 自定义侧边栏菜单组件 -->
+        <SiderMenu :theme="navTheme" />
       </a-layout-sider>
+      <!-- 布局2 -->
       <a-layout>
+        <!-- 头部布局 -->
         <a-layout-header style="background: #fff; padding: 0">
           <a-icon
             class="trigger"
             :type="collapsed ? 'menu-unfold' : 'menu-fold'"
             @click="collapsed = !collapsed"
           ></a-icon>
-          <Header> </Header>
+          <Header />
         </a-layout-header>
-        <a-layout-content style="margin: 0 16px">
-          <router-view />
-        </a-layout-content>
-        <a-layout-footer style="text-align: center">
-          <Footer />
-        </a-layout-footer>
+        <!-- 内容布局 -->
+        <a-layout-content style="margin: 0 16px"
+          ><router-view
+        /></a-layout-content>
+        <!-- 尾部布局 -->
+        <a-layout-footer style="text-align: center"><Footer /></a-layout-footer>
       </a-layout>
     </a-layout>
+    <!-- 设置-抽屉 -->
     <SettingDrawer />
   </div>
 </template>
@@ -72,6 +79,7 @@ export default {
   background: #eeeeee;
 }
 
+/* logo 样式 */
 .logo {
   height: 48px;
   line-height: 48px;
@@ -81,8 +89,15 @@ export default {
   margin: 16px;
 }
 
+/* css样式穿透，穿透scoped修改样式，用法：[外层容器] >>> [组件]{} */
+
+/* 深色主题 logo 颜色 */
 .nav-theme-dark >>> .logo {
   color: #ffffff;
+}
+/* 浅色主题 logo 颜色 */
+.nav-theme-light >>> .logo {
+  color: #008b8b;
 }
 
 /*.nav-layout-left >>> .*/

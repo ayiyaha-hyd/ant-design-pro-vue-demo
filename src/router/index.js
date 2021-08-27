@@ -1,16 +1,22 @@
 import Vue from "vue";
-import VueRouter from "vue-router";
-import NotFound from "@/views/404";
-import NProgress from "nprogress";
-import "nprogress/nprogress.css"; //加载动画
+import VueRouter from "vue-router"; // 引入 vue路由管理
+import NotFound from "@/views/404"; // 无效url访问指定跳转页面
+import NProgress from "nprogress"; // 页面跳转是出现在浏览器顶部的进度条 官网:https://ricostacruz.com/nprogress/
+import "nprogress/nprogress.css"; // NProgress加载动画css
 // 使用render函数，替代 RenderRouterView
 // import RenderRouterView from "../components/RenderRouterView";
+/*
+ * https://www.cnblogs.com/shaozhu520/p/11298805.html
+ * vue-router使用：
+ * 1.import,2.Vue.use,3.new VueRouter()构造函数构造一个router实例,4.new Vue()添加进去
+ */
 Vue.use(VueRouter);
 
 const routes = [
   {
     name: "user",
     path: "/user",
+    hideInMenu: true,
     // component: RenderRouterView,
     // 添加layout，改造之后，这一部也不需要了
     // component: {render: h=>h("router-view")},
@@ -43,11 +49,13 @@ const routes = [
       {
         name: "dashboard",
         path: "/dashboard",
+        meta: { icon: "dashboard", title: "仪表盘" },
         component: { render: (h) => h("router-view") },
         children: [
           {
             name: "analysis",
             path: "/dashboard/analysis",
+            meta: { icon: "analysis", title: "分析页" },
             component: () =>
               import(
                 /* webpackChunkName: "dashboard" */ "../views/dashboard/Analysis"
@@ -58,11 +66,13 @@ const routes = [
       {
         name: "form",
         path: "/form",
+        meta: { icon: "form", title: "表单" },
         component: { render: (h) => h("router-view") },
         children: [
           {
             name: "basic-form",
             path: "/form/basicForm",
+            meta: { icon: "basicForm", title: "基础表单" },
             component: () =>
               import(
                 /* webpackChunkName: "basicForm" */ "../views/forms/BasicForm"
@@ -71,7 +81,9 @@ const routes = [
           {
             name: "step-form",
             path: "/form/stepForm",
-            // component: () => import(/* webpackChunkName: "stepForm" */ "../views/forms/stepForm"),// index.js不生效？
+            hideChildrenMenu: true, //隐藏子路由
+            meta: { icon: "stepForm", title: "分布表单" },
+            // component: () => import(/* webpackChunkName: "stepForm" */ "../views/forms/stepForm"),// index.js不生效？ 20210827生效
             component: () =>
               import(
                 /* webpackChunkName: "stepForm" */ "../views/forms/stepForm/StepForm"
@@ -114,22 +126,20 @@ const routes = [
   {
     path: "/*",
     name: "404",
+    hideInMenu: true,
     component: NotFound,
-  },
-  {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
 ];
 
+/**
+ * this.$router 构造函数new VueRouter()的属性
+ * this.$router.options 实例router的属性
+ * this.$router.options.routes 自定义传入的路由数据
+ * @type {VueRouter}
+ */
 const router = new VueRouter({
-  mode: "history",
-  base: process.env.BASE_URL,
+  mode: "history", // 配置路由模式
+  base: process.env.BASE_URL, // 应用的基路径
   routes,
 });
 router.beforeEach((to, from, next) => {
