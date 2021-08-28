@@ -45,7 +45,6 @@ export default {
     },
   },
   data() {
-    this.count = 0;
     this.selectedKeysMap = {}; // 选中的菜单项集合
     this.openKeysMap = {}; // 展开的菜单项集合
     const menuData = this.getMenuData(this.$router.options.routes); // this.$router.options.routes 路由数据
@@ -67,12 +66,9 @@ export default {
      * @returns {*[]}
      */
     getMenuData(routes = [], parentKeys = [], selectedKey) {
-      debugger;
       const menuData = [];
       // 遍历路由数据，筛选出需要展示在侧边栏的菜单数据
       routes.forEach((item) => {
-        this.count++;
-        console.log("count: " + this.count + ": " + JSON.stringify(item));
         // 1. 如果路由有名称，并且不隐藏菜单（需要挂载到页面上）
         if (item.name && !item.hideInMenu) {
           // 存储可供展开的菜单项，以item.path为key

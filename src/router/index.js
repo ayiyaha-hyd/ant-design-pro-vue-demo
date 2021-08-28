@@ -3,6 +3,9 @@ import VueRouter from "vue-router"; // 引入 vue路由管理
 import NotFound from "@/views/404"; // 无效url访问指定跳转页面
 import NProgress from "nprogress"; // 页面跳转是出现在浏览器顶部的进度条 官网:https://ricostacruz.com/nprogress/
 import "nprogress/nprogress.css"; // NProgress加载动画css
+import { findLast } from "loadsh/collection"; // 引入 loadsh 组件库，调用其方法
+import { check, isLogin } from "@/utils/auth"; // 引入 权限校验
+import Forbidden from "@/views/Forbidden";
 // 使用render函数，替代 RenderRouterView
 // import RenderRouterView from "../components/RenderRouterView";
 /*
@@ -39,6 +42,9 @@ const routes = [
   },
   {
     path: "/",
+    meta: {
+      authority: ["user", "admin"],
+    },
     component: () =>
       import(/* webpackChunkName: "layout" */ "../layouts/BasicLayout"),
     children: [
@@ -66,7 +72,7 @@ const routes = [
       {
         name: "form",
         path: "/form",
-        meta: { icon: "form", title: "表单" },
+        meta: { icon: "form", title: "表单", authority: ["admin"] },
         component: { render: (h) => h("router-view") },
         children: [
           {
@@ -124,6 +130,12 @@ const routes = [
     ],
   },
   {
+    path: "/403",
+    name: "403",
+    hideInMenu: true,
+    component: Forbidden,
+  },
+  {
     path: "/*",
     name: "404",
     hideInMenu: true,
@@ -145,6 +157,24 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.path !== from.path) {
     NProgress.start();
+  }
+  // TODO 了解 findLast,to.matched 用法
+  const record = findLast(to.matched, (record) => record.meta.authority);
+  //如果权限校验没通过
+  if (record && !check(record.meta.authority)) {
+    //判断是否未登录无权限，未登录跳转到登陆页面
+    if (!isLogin() && to.path !== "/user/login") {
+      next({
+        path: "/user/login",
+      });
+    } else if (to.path !== "/403") {
+      // 已登录无权限
+      // 此处注意if...else if充分利用好顺序，判断条件要优化，比如写成else if(isLogin() && to.path !== "/403") 则画蛇添足
+      next({
+        path: "/403",
+      });
+      NProgress.done();
+    }
   }
   next();
 });
