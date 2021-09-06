@@ -26,7 +26,7 @@
 
 <script>
 import SubMenu from "@/layouts/SubMenu";
-
+import { check } from "@/utils/auth";
 export default {
   props: {
     theme: {
@@ -68,7 +68,11 @@ export default {
     getMenuData(routes = [], parentKeys = [], selectedKey) {
       const menuData = [];
       // 遍历路由数据，筛选出需要展示在侧边栏的菜单数据
-      routes.forEach((item) => {
+      for (let item of routes) {
+        // 如果当前路由无权限则不处理，不添加到显示菜单上去
+        if (item.meta && item.meta.authority && !check(item.meta.authority)) {
+          break;
+        }
         // 1. 如果路由有名称，并且不隐藏菜单（需要挂载到页面上）
         if (item.name && !item.hideInMenu) {
           // 存储可供展开的菜单项，以item.path为key
@@ -86,12 +90,12 @@ export default {
               item.path, // 传入当前key
             ]);
           } else {
-            // 路由没有子节点或者子节点菜单项需要隐藏
-            // this.getMenuData(
-            //   item.children,
-            //   selectedKey ? parentKeys : [...parentKeys, item.path],
-            //   selectedKey || item.path
-            // );
+            // //  路由没有子节点或者子节点菜单项需要隐藏
+            //  this.getMenuData(
+            //    item.children,
+            //    selectedKey ? parentKeys : [...parentKeys, item.path],
+            //    selectedKey || item.path
+            //  );
           }
           // 将处理好的 item 放入菜单数据
           menuData.push(newItem);
@@ -102,7 +106,7 @@ export default {
             ...this.getMenuData(item.children, [...parentKeys, item.path])
           );
         }
-      });
+      }
       return menuData;
     },
   },

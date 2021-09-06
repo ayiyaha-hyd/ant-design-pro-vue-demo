@@ -6,6 +6,7 @@ import "nprogress/nprogress.css"; // NProgress加载动画css
 import { findLast } from "loadsh/collection"; // 引入 loadsh 组件库，调用其方法
 import { check, isLogin } from "@/utils/auth"; // 引入 权限校验
 import Forbidden from "@/views/Forbidden";
+import { notification } from "ant-design-vue";
 // 使用render函数，替代 RenderRouterView
 // import RenderRouterView from "../components/RenderRouterView";
 /*
@@ -170,6 +171,12 @@ router.beforeEach((to, from, next) => {
     } else if (to.path !== "/403") {
       // 已登录无权限
       // 此处注意if...else if充分利用好顺序，判断条件要优化，比如写成else if(isLogin() && to.path !== "/403") 则画蛇添足
+
+      // this.$notification.error 什么时候可以用$xxx????
+      notification.error({
+        message: "403",
+        description: "没有权限，请联系管理员",
+      });
       next({
         path: "/403",
       });

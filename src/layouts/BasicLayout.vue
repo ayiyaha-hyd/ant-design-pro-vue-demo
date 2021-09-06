@@ -21,6 +21,7 @@
         <!-- 头部布局 -->
         <a-layout-header style="background: #fff; padding: 0">
           <a-icon
+            v-auth="['admin']"
             class="trigger"
             :type="collapsed ? 'menu-unfold' : 'menu-fold'"
             @click="collapsed = !collapsed"
@@ -35,8 +36,11 @@
         <a-layout-footer style="text-align: center"><Footer /></a-layout-footer>
       </a-layout>
     </a-layout>
-    <!-- 设置-抽屉 -->
-    <SettingDrawer />
+    <!-- 权限组件，利用函数式组件实现,render -->
+    <Authorized :authority="['admin']">
+      <!-- 设置-抽屉 -->
+      <SettingDrawer />
+    </Authorized>
   </div>
 </template>
 
