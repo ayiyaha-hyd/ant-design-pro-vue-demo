@@ -3,8 +3,8 @@
  * @returns {string[]}
  */
 export function getCurrentAuthority() {
-  // return ["admin"];
-  return ["user"];
+  return ["admin"];
+  // return ["user"];
 }
 
 /**
